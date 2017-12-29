@@ -1,0 +1,92 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.9.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'org.springframework.boot'
+
+
+//定义打包的集合
+sourceSets {
+    main {
+        java {
+            exclude "com/xhuabu/source/*.java"
+        }
+
+        resources{
+            exclude "*.properties"
+        }
+    }
+}
+
+
+processResources {
+    from('src/main/java') {
+        include '**/*.xml'
+    }
+}
+
+
+
+def artifactId = "JLAuth"
+group = 'com.xhuabu.source'
+version = '1.0.0-SNAPSHOT'
+description = 'JLAuth'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+configurations {
+    extraLibs
+}
+
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter')
+    compile('org.springframework.boot:spring-boot-starter-web')
+	compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '1.2.0'
+    compile group: 'com.github.pagehelper', name: 'pagehelper-spring-boot-starter', version: '1.1.1'
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+
+//    compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
+//    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
+//    extraLibs group: 'org.reflections', name: 'reflections', version: '0.9.10'
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+//    configurations.compile.extendsFrom(configurations.extraLibs)
+}
+
+
+//打包classes文件
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.output
+//    from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "http://maven.xhuabu.com/repository/xhb-public/") {
+                authentication(userName: "admin", password: "666xhb888")
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "$project.group"
+        }
+    }
+}
