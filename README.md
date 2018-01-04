@@ -1,8 +1,8 @@
-jlauth
+easy-auth
 
 ## 简介
 
-JLAuth是一个基于springboot，mybatis, 并和特定权限表结构关联的权限框架，采用GPL开源协议。
+easy-auth是一个基于springboot，mybatis, 并和特定权限表结构关联的权限框架，采用GPL开源协议。
 
 此框架可以帮你高效管理管理员与群组，群组与菜单、群组与权限间的相互关系，它已实现以下功能
 
@@ -35,7 +35,7 @@ mysql –u用户名 –p密码 –D数据库 < auth.sql
 ### 依赖导入
 
 ```
-compile group: 'com.xhuabu.source', name: 'JLAuth', version: '1.0.0-20171226.023800-10'
+compile group: 'com.xhuabu.source', name: 'easy-auth', version: '1.0.0-20180104.072843-1'
 ```
 
 ### 装配spring bean
