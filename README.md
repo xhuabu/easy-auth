@@ -94,7 +94,7 @@ com.xhuabu.source.auth.ipWhiteList=127.0.0.1,10.0.0.49
 ```
 
 
-###配置加密方式(可选)
+### 配置加密方式(可选)
 
 1 配置类需要@JLAuthConfig注解
 2 配置类需要继承JLAuthConfiguration实现抽象方法
