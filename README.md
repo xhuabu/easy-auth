@@ -6,9 +6,11 @@ easy-auth是一个基于springboot，mybatis, 并和特定权限表结构关联�
 
 此框架可以帮你高效管理管理员与群组，群组与菜单、群组与权限间的相互关系，它已实现以下功能
 
+* 支持自动生成权限URI
+
 * 支持对用户/群组进行增删改查
 
-* 支持对菜单/权限进行增删改查
+* 支持对菜单进行增删改查
 
 * 支持关联用户与群组
 
@@ -35,6 +37,13 @@ mysql –u用户名 –p密码 –D数据库 < auth.sql
 ### 依赖导入
 
 ```
+添加maven仓库地址： 
+
+maven{
+        url "http://maven.xhuabu.com/repository/xhb-public/"
+    }
+
+添加依赖
 compile group: 'com.xhuabu.source', name: 'easy-auth', version: '1.0.0-20180104.072843-1'
 ```
 
@@ -67,6 +76,14 @@ public class GalaxyApplication {
 }
 ```
 
+### 配置@Controller方法所在包的路径
+在application.properties中添加属性:
+
+```
+com.xhuabu.source.auth.contollerPackagePath=com.xhuabu.admin.controller
+```
+
+
 
 ### 配置白名单(可选)
 
@@ -75,9 +92,6 @@ public class GalaxyApplication {
 ```
 com.xhuabu.source.auth.ipWhiteList=127.0.0.1,10.0.0.49
 ```
-
-
-
 
 
 ###配置加密方式(可选)
@@ -142,3 +156,31 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 ```
 authManager.delGrant(request);
 ```
+
+### 鉴权
+
+在需要鉴权的控制器方法上添加注解@Authj, 其中value是权限名，auth决定是否进行鉴权，默认true
+
+容器启动后会自动将权限url加载到内存当中
+
+```
+	@Authj(value = "修改支付渠道", auth = true)
+    @RequestMapping(value = "/api/admin/pay/channel", method = RequestMethod.POST)
+    public YQZResponse apiCreateProduct(@RequestParam(value = "status", required = true) Integer status,
+                                        @RequestParam(value = "payWayId", required = true) Integer payWayId) {
+        try {
+            int ret = payService.updatePayWayStatus(payWayId,status);
+            if (ret > 0) {
+                return YQZResponse.successResponse();
+            }
+            return YQZResponse.errorResponse(ResponseCode.ERROR_EDIT_PAY_WAY_STATUS_FAIL, null);
+        } catch (Exception e) {
+            logger.info("插入合约异常：{}", e);
+            return YQZResponse.errorResponse(ResponseCode.ERROR_EDIT_PAY_WAY_STATUS_FAIL, null);
+        }
+    }
+```
+
+
+
+

@@ -10,13 +10,22 @@ public interface JLAdminService {
 
 
     /**
-     * 管理员登录
+     * 管理员用户名密码登录
      *
      * @param username 用户名
      * @param password 密码
      * @return 管理员模型
      */
     public Admin signin(String username, String password);
+
+    /**
+     * 管理员电话密码登录
+     *
+     * @param phone 用户名
+     * @param password 密码
+     * @return 管理员模型
+     */
+    public Admin signinWithPhone(String phone, String password);
 
     /**
      * 描述：编辑管理员

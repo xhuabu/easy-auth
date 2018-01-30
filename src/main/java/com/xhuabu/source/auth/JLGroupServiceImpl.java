@@ -47,6 +47,9 @@ public class JLGroupServiceImpl implements JLGroupService {
     @Autowired
     AdminManagerMapper adminManagerMapper;
 
+    @Autowired
+    JLAuthManager authManager;
+
 
     /**
      * 获取组列表
@@ -244,13 +247,13 @@ public class JLGroupServiceImpl implements JLGroupService {
      * 更新组权限
      *
      * @param groupId       群组ID
-     * @param authIds       权限ids， 如：1，2，3
-     * @param createAdminId 创建人ID
+     * @param uris        * @param uris 多个权限uri
      * @return 1 成功， 0失败
      */
     @Override
     @Transactional
-    public int updateGroupAuth(Integer groupId, String authIds, Integer createAdminId) {
+    public int updateGroupAuth(Integer groupId, String uris) {
+
 
         //先删除指定组的所有权限关联
         GroupAuthExample groupAuthExample = new GroupAuthExample();
@@ -259,12 +262,12 @@ public class JLGroupServiceImpl implements JLGroupService {
         groupAuthMapper.deleteByExample(groupAuthExample);
 
         //重新生成指定组的所有权限关联
-        String[] idStr = authIds.split(",");
+        String[] uriStrList = uris.split(",");
         GroupAuth groupAuth = new GroupAuth();
         groupAuth.setGroupId(groupId);
-        groupAuth.setCreateAdminId(createAdminId);
-        for (String id : idStr) {
-            groupAuth.setAuthId(Integer.parseInt(id));
+        groupAuth.setCreateAdminId(authManager.getUserId());
+        for (String uri : uriStrList) {
+            groupAuth.setUri(uri);
             groupAuthMapper.insertSelective(groupAuth);
         }
 
@@ -443,5 +446,44 @@ public class JLGroupServiceImpl implements JLGroupService {
         });
 
     }
+
+    /**
+     * 查询组
+     *
+     * @param key  组名筛选
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PageInfo<Group> getGroupWithPage(String key, Integer page, Integer size){
+
+
+        GroupExample groupExample = getGroupExample(key);
+
+        PageHelper.startPage(page, size);
+        PageInfo<Group> pageInfo = new PageInfo<>(groupMapper.selectByExample(groupExample));
+
+        return pageInfo;
+    }
+
+    /**
+     * 获取组查询条件
+     *
+     * @param key
+     * @return
+     */
+    private GroupExample getGroupExample(String key) {
+        GroupExample groupsExample = new GroupExample();
+        if (!StringUtils.isEmpty(key)) {
+            groupsExample.createCriteria().andNameLike("%" + key + "%");
+        }
+
+        groupsExample.setOrderByClause("create_time desc");
+
+        return groupsExample;
+    }
+
+
 
 }

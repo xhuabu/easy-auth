@@ -1,13 +1,13 @@
 package com.xhuabu.source.annotation.authentication;
 
 
+import com.xhuabu.source.annotation.authorization.Authj;
 import com.xhuabu.source.auth.JLAuthManager;
 import com.xhuabu.source.common.tool.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -49,18 +49,14 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
         //资源权限鉴定
         if (handler instanceof HandlerMethod) {
             HandlerMethod h = (HandlerMethod) handler;
-            Authentication authentication = h.getMethodAnnotation(Authentication.class);
+            Authj authentication = h.getMethodAnnotation(Authj.class);
 
             // 没有注解
             if (authentication == null) {
                 return true;
             }
 
-            //检查是否有权限 ，获取RequestMapping注解的value
-            RequestMapping requestMapping = h.getMethodAnnotation(RequestMapping.class);
-
-            //获取RequestMapping注解的value,用来鉴权
-            String uri = requestMapping.value()[0];
+            String uri = request.getServletPath();
 
             if (!JLAuthManager.authentication(request, uri)) {
                 // 需要登录

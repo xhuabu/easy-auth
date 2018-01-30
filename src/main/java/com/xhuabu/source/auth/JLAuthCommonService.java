@@ -1,6 +1,5 @@
 package com.xhuabu.source.auth;
 
-
 import com.xhuabu.source.model.po.*;
 import com.xhuabu.source.model.vo.MenuVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ import java.util.*;
 @Component
 public class JLAuthCommonService {
 
-    @Autowired
-    private JLAuthService authService;
 
     @Autowired
     private JLGroupService groupService;
@@ -84,8 +81,8 @@ public class JLAuthCommonService {
             //查对应的 uri
             List<GroupAuth> groupAuthList = groupService.getGroupAuthByGroupId(groupId);
             for (GroupAuth groupAuth : groupAuthList) {
-                Auth auth = authService.getAuthById(groupAuth.getAuthId());
-                uriSet.add(auth.getUri());
+//                Auth auth = authService.getAuthById(groupAuth.getAuthId());
+                uriSet.add(groupAuth.getUri());
             }
 
             //查对应的 menus

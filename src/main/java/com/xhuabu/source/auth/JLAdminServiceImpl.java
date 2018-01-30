@@ -97,6 +97,53 @@ public class JLAdminServiceImpl implements JLAdminService {
         return admin;
     }
 
+    /**
+     * 管理员电话密码登录
+     *
+     * @param phone 用户名
+     * @param password 密码
+     * @return 管理员模型
+     */
+    @Override
+    public Admin signinWithPhone(String phone, String password){
+        //1 判断用户是否存在
+        AdminExample example = new AdminExample();
+        AdminExample.Criteria criteria = example.createCriteria();
+        criteria.andPhoneEqualTo(phone);
+        List<Admin> adminList = adminMapper.selectByExample(example);
+        if (adminList == null || adminList.isEmpty()) {
+            logger.error("管理员不存在:{}", phone);
+            throw new AuthException("管理员不存在");
+        }
+
+        //2 取出用户
+        Admin admin = adminList.get(0);
+
+        //3 判断密码是否正确
+        String savedPwd = admin.getPassword();
+        String salt = admin.getSalt();
+
+        //todo 需要自定义密码加密方式
+        Boolean pwdMathch = passwordEncoder.crypt(password, salt).equals(savedPwd);
+        if (!pwdMathch) {
+            logger.error("管理员:{} 登录密码不正确:{}", phone, password);
+            throw new AuthException("管理员登录密码不正确");
+        }
+
+        //4 判断账户当前状态是否为"冻结"
+        if (AdminStatusEnum.ADMIN_STATUS_FREEZE.getCode().equals(admin.getStatus())) {
+            logger.info("当前账户已被冻结！");
+            throw new AuthException("当前账户已被冻结!");
+        }
+
+        //5 登录成功，记录当前登录时间
+        admin.setLastTime(new Date());
+        adminMapper.updateByPrimaryKeySelective(admin);
+
+        logger.info("管理员登录成功: {}， {}", phone, password);
+        return admin;
+    }
+
 
     /**
      * 描述：编辑管理员
@@ -180,6 +227,7 @@ public class JLAdminServiceImpl implements JLAdminService {
         admin.setNickName(nickName);
         admin.setUsername(userName);
         admin.setPassword(savePassword);
+        admin.setCreateAdminId(createAdminId);
         //是否要实现管理员添加
         admin.setStatus(AdminStatusEnum.ADMIN_STATUS_NORMAL.getCode());
         adminMapper.insertSelective(admin);

@@ -107,11 +107,10 @@ public interface JLGroupService {
      * 更新组权限
      *
      * @param groupId 群组ID
-     * @param authIds 权限ids， 如：1，2，3
-     * @param createAdminId 创建人ID
+     * @param uris 多个权限uri
      * @return 1 成功， 0失败
      */
-    int updateGroupAuth(Integer groupId, String authIds, Integer createAdminId);
+    int updateGroupAuth(Integer groupId, String uris);
 
 
 
@@ -178,5 +177,15 @@ public interface JLGroupService {
      */
     PageInfo<AdminGroup> getAdminGroupsByGroupId(Integer groupId, String key, Integer page, Integer size);
 
+
+    /**
+     * 获取组并分页
+     *
+     * @param key  组名筛选
+     * @param page
+     * @param size
+     * @return
+     */
+    PageInfo<Group> getGroupWithPage(String key, Integer page, Integer size);
 
 }

@@ -20,6 +20,11 @@ public class PropertiesConfiguration {
      */
     private String ipWhiteList;
 
+    /**
+     *  控制器所在包
+     */
+    private String contollerPackagePath;
+
 
     public String getIpWhiteList() {
         return ipWhiteList;
@@ -27,5 +32,13 @@ public class PropertiesConfiguration {
 
     public void setIpWhiteList(String ipWhiteList) {
         this.ipWhiteList = ipWhiteList;
+    }
+
+    public String getContollerPackagePath() {
+        return contollerPackagePath;
+    }
+
+    public void setContollerPackagePath(String contollerPackagePath) {
+        this.contollerPackagePath = contollerPackagePath;
     }
 }

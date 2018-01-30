@@ -84,6 +84,19 @@ public class JLAuthManager {
     }
 
     /**
+     * 获取IP白名单列表
+     *
+     * @return IP白名单列表
+     */
+    public String getControllerPackagePath(){
+
+
+        //从属性文件中获取
+        return propertiesConfiguration.getContollerPackagePath();
+    }
+
+
+    /**
      *  鉴权
      *
      * @param request http请求对象
