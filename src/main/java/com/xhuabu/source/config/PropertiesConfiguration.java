@@ -26,6 +26,12 @@ public class PropertiesConfiguration {
     private String contollerPackagePath;
 
 
+    /**
+     *  指定加密类的路径
+     */
+    private String cryptClassPackagePath;
+
+
     public String getIpWhiteList() {
         return ipWhiteList;
     }
@@ -40,5 +46,13 @@ public class PropertiesConfiguration {
 
     public void setContollerPackagePath(String contollerPackagePath) {
         this.contollerPackagePath = contollerPackagePath;
+    }
+
+    public String getCryptClassPackagePath() {
+        return cryptClassPackagePath;
+    }
+
+    public void setCryptClassPackagePath(String cryptClassPackagePath) {
+        this.cryptClassPackagePath = cryptClassPackagePath;
     }
 }

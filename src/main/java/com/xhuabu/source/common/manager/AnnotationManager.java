@@ -3,8 +3,6 @@ package com.xhuabu.source.common.manager;
 
 import com.xhuabu.source.annotation.config.JLAuthConfig;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -21,15 +19,13 @@ import java.util.Set;
 public class AnnotationManager {
 
 
-    private Logger logger = LoggerFactory.getLogger(AnnotationManager.class);
-
     /**
      *  获取添加了@JLAuthConfig的类
      */
     public Set<Class<?>> getConfigurationClasses(){
+
         Reflections reflections = new Reflections("");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(JLAuthConfig.class);
-        logger.info("找到所有被添加了注释的类：{}", annotated.toString());
         return annotated;
     }
 

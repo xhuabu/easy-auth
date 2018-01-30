@@ -4,6 +4,7 @@ package com.xhuabu.source.annotation.authentication;
 import com.xhuabu.source.annotation.authorization.Authj;
 import com.xhuabu.source.auth.JLAuthManager;
 import com.xhuabu.source.common.tool.IpUtil;
+import com.xhuabu.source.config.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     JLAuthManager JLAuthManager;
+
+    @Autowired
+    PropertiesConfiguration propertiesConfiguration;
 
     /**
      * 请求前鉴定权限

@@ -44,7 +44,7 @@ maven{
     }
 
 添加依赖
-compile group: 'com.xhuabu.source', name: 'easy-auth', version: '1.1.0-20180130.044509-7'
+compile group: 'com.xhuabu.source', name: 'easy-auth', version: '1.1.0-20180130.080055-9'
 ```
 
 ### 装配spring bean
