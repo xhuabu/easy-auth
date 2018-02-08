@@ -1,10 +1,8 @@
 package com.xhuabu.source.annotation.authentication;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xhuabu.source.annotation.authorization.Authj;
 import com.xhuabu.source.auth.JLAuthManager;
-import com.xhuabu.source.auth.JLResponse;
 import com.xhuabu.source.common.tool.IpUtil;
 import com.xhuabu.source.config.PropertiesConfiguration;
 import org.slf4j.Logger;
@@ -78,11 +76,8 @@ public class AuthenticationInterceptor extends HandlerInterceptorAdapter {
                 // 是api请求返回错误
                 response.setCharacterEncoding("utf-8");
                 response.setContentType("application/json");
-                JLResponse jlResponse = new JLResponse();
-                jlResponse.setCode(-1);
-                jlResponse.setMsg("没有权限");
                 PrintWriter pw = response.getWriter();
-                pw.write(new ObjectMapper().writeValueAsString(jlResponse));
+                pw.write("未鉴权");
                 pw.flush();
                 return false;
             }
