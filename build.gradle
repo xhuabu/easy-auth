@@ -35,7 +35,7 @@ processResources {
 }
 
 
-def artifactId = "EasyAuth"
+def artifactId = "easy-auth"
 group = 'com.xhuabu.source'
 version = '1.2.0'
 description = 'EasyAuth'
