@@ -4,7 +4,7 @@ import com.xhuabu.source.config.PropertiesConfiguration;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class JlAuthApplicationTests extends BaseTest{
+public class EasyAuthApplicationTests extends BaseTest{
 
 
     @Autowired
