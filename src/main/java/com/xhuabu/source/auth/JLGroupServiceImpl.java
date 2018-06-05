@@ -3,12 +3,12 @@ package com.xhuabu.source.auth;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xhuabu.source.common.tool.StringUtil;
 import com.xhuabu.source.dao.*;
 import com.xhuabu.source.model.po.*;
 import com.xhuabu.source.model.vo.GroupDetailVO;
 import com.xhuabu.source.model.vo.GroupVO;
 import com.xhuabu.source.model.vo.ListedAdminGroupVO;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -350,7 +349,7 @@ public class JLGroupServiceImpl implements JLGroupService {
 
         //查询没归组的管理员
         AdminExample adminExample = new AdminExample();
-        if (!StringUtil.isEmpty(query)) {
+        if (!StringUtils.isEmpty(query)) {
             AdminExample.Criteria criteria1 = adminExample.createCriteria();
             AdminExample.Criteria criteria2 = adminExample.or();
             criteria1.andIdNotIn(ids).andUsernameLike("%" + query + "%");

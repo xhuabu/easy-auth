@@ -43,7 +43,7 @@
         admin.username AS userName
         FROM
         groups
-        LEFT JOIN admin ON groups.create_admin_id = admin.id
+        LEFT JOIN admins ON groups.create_admin_id = admins.id
         WHERE groups.id = #{id}
     </select>
 

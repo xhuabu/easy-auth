@@ -19,8 +19,8 @@
 
         <!--数据库连接信息 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.0.0.9/test" userId="root"
-                        password="">
+                        connectionURL="jdbc:mysql://10.0.0.1/test" userId="root"
+                        password="1">
         </jdbcConnection>
 
         <!--生成的model 包路径 -->
@@ -30,12 +30,12 @@
         </javaModelGenerator>
 
         <!--生成xml mapper文件 路径 -->
-        <sqlMapGenerator targetPackage="mapping" targetProject="../src/main/resources">
+        <sqlMapGenerator targetPackage="com.xhuabu.source.dao" targetProject="../src/main/java">
         <property name="enableSubPackages" value="ture"/>
         </sqlMapGenerator>
 
         <!-- 生成的Dao接口 的包路径 -->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.xhuabu.source" targetProject="../src/main/java">
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.xhuabu.source.dao" targetProject="../src/main/java">
             <property name="enableSubPackages" value="ture"/>
         </javaClientGenerator>
 

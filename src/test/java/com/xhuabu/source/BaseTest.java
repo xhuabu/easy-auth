@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
  * Created by lee on 17/4/25.
@@ -17,8 +17,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @CreatedBy lee
  * @Date 17/4/25
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = JlAuthApplication.class)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = EasyAuthApplication.class)
 public class BaseTest extends AbstractJUnit4SpringContextTests {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -27,7 +27,6 @@ public class BaseTest extends AbstractJUnit4SpringContextTests {
         //init mockito annotation
         MockitoAnnotations.initMocks(this);
     }
-
 
     @Test
     public void test(){}
