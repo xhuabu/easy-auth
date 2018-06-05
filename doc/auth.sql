@@ -116,7 +116,7 @@ CREATE TABLE `group_menu` (
   `comment` varchar(255) DEFAULT '' COMMENT '备注',
   `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2547 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

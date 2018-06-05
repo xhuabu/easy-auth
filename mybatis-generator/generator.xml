@@ -30,9 +30,9 @@
         </javaModelGenerator>
 
         <!--生成xml mapper文件 路径 -->
-        <!--<sqlMapGenerator targetPackage="mapping" targetProject="../src/main/resources">-->
-        <!--<property name="enableSubPackages" value="ture"/>-->
-        <!--</sqlMapGenerator>-->
+        <sqlMapGenerator targetPackage="mapping" targetProject="../src/main/resources">
+        <property name="enableSubPackages" value="ture"/>
+        </sqlMapGenerator>
 
         <!-- 生成的Dao接口 的包路径 -->
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.xhuabu.source" targetProject="../src/main/java">
