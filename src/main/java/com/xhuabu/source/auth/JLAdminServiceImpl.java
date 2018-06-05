@@ -7,7 +7,7 @@ import com.xhuabu.source.common.coder.PasswordEncoder;
 import com.xhuabu.source.common.enums.AdminStatusEnum;
 import com.xhuabu.source.common.exception.AuthException;
 import com.xhuabu.source.common.manager.AnnotationManager;
-import com.xhuabu.source.common.tool.StringUtil;
+
 import com.xhuabu.source.dao.AdminGroupMapper;
 import com.xhuabu.source.dao.AdminManagerMapper;
 import com.xhuabu.source.dao.AdminMapper;
@@ -16,12 +16,12 @@ import com.xhuabu.source.model.po.AdminExample;
 import com.xhuabu.source.model.po.AdminGroup;
 import com.xhuabu.source.model.po.AdminGroupExample;
 import com.xhuabu.source.model.vo.ListedAdminVO;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -35,7 +35,6 @@ public class JLAdminServiceImpl implements JLAdminService {
 
     @Autowired
     private AdminMapper adminMapper;
-
 
     @Autowired
     private AdminGroupMapper adminGroupMapper;
@@ -169,7 +168,7 @@ public class JLAdminServiceImpl implements JLAdminService {
         admin.setNickName(nickName);
 
         //如果password不为空，则重置密码
-        if (!StringUtil.isEmpty(password)) {
+        if (!StringUtils.isEmpty(password)) {
             String salt = admin.getSalt();
 
 

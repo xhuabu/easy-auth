@@ -1,19 +1,18 @@
 buildscript {
-	ext {
-		springBootVersion = '1.5.9.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '1.5.9.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
-
 
 //定义打包的集合
 sourceSets {
@@ -22,7 +21,7 @@ sourceSets {
             exclude "com/xhuabu/source/*.java"
         }
 
-        resources{
+        resources {
             exclude "*.properties"
         }
     }
@@ -36,15 +35,14 @@ processResources {
 }
 
 
-
-def artifactId = "JLAuth"
+def artifactId = "easy-auth"
 group = 'com.xhuabu.source'
-version = '1.0.0-SNAPSHOT'
-description = 'JLAuth'
+version = '1.3.0'
+description = 'EasyAuth'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 configurations {
@@ -53,19 +51,21 @@ configurations {
 
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter')
-    compile('org.springframework.boot:spring-boot-starter-web')
-	compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '1.2.0'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '1.5.6.RELEASE'
+    compile group: 'org.mybatis.spring.boot', name: 'mybatis-spring-boot-starter', version: '1.2.0'
     compile group: 'com.github.pagehelper', name: 'pagehelper-spring-boot-starter', version: '1.1.1'
     compile group: 'org.reflections', name: 'reflections', version: '0.9.10'
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
-//    compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
-//    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
-//    extraLibs group: 'org.reflections', name: 'reflections', version: '0.9.10'
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+    // 单独运行应用时打开注释
+//    // https://mvnrepository.com/artifact/com.alibaba/druid-spring-boot-starter
+//    compile group: 'com.alibaba', name: 'druid-spring-boot-starter', version: '1.1.3'
+//    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+//    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 //    configurations.compile.extendsFrom(configurations.extraLibs)
 }
-
 
 //打包classes文件
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -82,7 +82,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: "http://maven.xhuabu.com/repository/xhb-public/") {
-                authentication(userName: "admin", password: "666xhb888")
+                authentication(userName: "admin", password: "123")
             }
             pom.version = "$project.version"
             pom.artifactId = "$artifactId"
