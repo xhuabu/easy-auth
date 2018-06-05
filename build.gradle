@@ -80,7 +80,7 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: "http://maven.xhuabu.com/repository/xhb-public/") {
-                authentication(userName: "admin", password: "556")
+                authentication(userName: "admin", password: "334")
             }
             pom.version = "$project.version"
             pom.artifactId = "$artifactId"
