@@ -89,7 +89,7 @@ public class JLAdminServiceImpl implements JLAdminService {
         }
 
         //5 登录成功，记录当前登录时间
-        admin.setLastTime(new Date());
+//        admin.setLastTime(new Date());
         adminMapper.updateByPrimaryKeySelective(admin);
 
         logger.info("管理员登录成功: {}， {}", username, password);
@@ -136,7 +136,7 @@ public class JLAdminServiceImpl implements JLAdminService {
         }
 
         //5 登录成功，记录当前登录时间
-        admin.setLastTime(new Date());
+//        admin.setLastTime(new Date());
         adminMapper.updateByPrimaryKeySelective(admin);
 
         logger.info("管理员登录成功: {}， {}", phone, password);
@@ -165,7 +165,7 @@ public class JLAdminServiceImpl implements JLAdminService {
             return 0;
         }
         admin.setId(id);
-        admin.setNickName(nickName);
+        admin.setNickname(nickName);
 
         //如果password不为空，则重置密码
         if (!StringUtils.isEmpty(password)) {
@@ -223,7 +223,7 @@ public class JLAdminServiceImpl implements JLAdminService {
         String savePassword = passwordEncoder.crypt(password, salt);
         admin.setSalt(salt);
         admin.setPhone(phone);
-        admin.setNickName(nickName);
+        admin.setNickname(nickName);
         admin.setUsername(userName);
         admin.setPassword(savePassword);
         admin.setCreateAdminId(createAdminId);
@@ -351,7 +351,7 @@ public class JLAdminServiceImpl implements JLAdminService {
         if (!StringUtils.isEmpty(key)) {
             AdminExample.Criteria criteria = example.createCriteria();
             AdminExample.Criteria criteria2 = example.or();
-            criteria.andNickNameLike("%" + key + "%");
+            criteria.andNicknameLike("%" + key + "%");
             criteria2.andPhoneLike("%" + key + "%");
             if (status != null) {
                 criteria.andStatusEqualTo(status);

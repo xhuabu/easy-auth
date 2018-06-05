@@ -24,18 +24,17 @@ DROP TABLE IF EXISTS `admins`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `admins` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `nick_name` varchar(64) NOT NULL DEFAULT '',
   `username` varchar(50) NOT NULL,
+  `nickname` varchar(20) DEFAULT NULL COMMENT '昵称',
+  `phone` varchar(64) NOT NULL,
   `password` varchar(32) NOT NULL,
   `salt` varchar(64) NOT NULL,
-  `phone` varchar(20) NOT NULL,
-  `status` int(2) NOT NULL DEFAULT '0' COMMENT '状态 0:初始状态 1:正常使用 -1:冻结',
   `last_ip` varchar(20) DEFAULT NULL,
-  `comment` varchar(255) DEFAULT '' COMMENT '备注',
-  `last_time` datetime DEFAULT NULL,
   `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `status` int(2) NOT NULL DEFAULT '0' COMMENT '状态 0:初始状态 1:正常使用 -1:冻结',
+  `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `phone_UNIQUE` (`phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
@@ -69,15 +68,15 @@ DROP TABLE IF EXISTS `auth`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `auth` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `name` varchar(40) NOT NULL,
   `uri` varchar(255) NOT NULL,
   `create_admin_id` int(11) NOT NULL,
+  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=121 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -109,14 +108,14 @@ DROP TABLE IF EXISTS `group_menu`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `group_menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `group_id` int(11) NOT NULL,
   `menu_id` int(11) NOT NULL,
-  `comment` varchar(255) DEFAULT '' COMMENT '备注',
   `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,17 +145,17 @@ DROP TABLE IF EXISTS `menus`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `menus` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
-  `parent_id` int(11) DEFAULT NULL COMMENT '父菜单ID',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `name` varchar(20) NOT NULL COMMENT '菜单名称',
   `uri` varchar(100) NOT NULL COMMENT '菜单对应的uri',
+  `parent_id` int(11) DEFAULT NULL COMMENT '父菜单ID',
   `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
-  `comment` varchar(255) DEFAULT '' COMMENT '备注',
   `weight` int(11) NOT NULL DEFAULT '0' COMMENT '权重',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uri_UNIQUE` (`uri`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

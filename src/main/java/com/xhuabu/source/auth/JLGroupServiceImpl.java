@@ -293,7 +293,7 @@ public class JLGroupServiceImpl implements JLGroupService {
             groupVO = new GroupVO();
             BeanUtils.copyProperties(group, groupVO);
             admin = adminMapper.selectByPrimaryKey(group.getCreateAdminId());
-            groupVO.setCreaterName(admin.getNickName());
+            groupVO.setCreaterName(admin.getNickname());
             listGroup.add(groupVO);
         }
 
@@ -420,7 +420,7 @@ public class JLGroupServiceImpl implements JLGroupService {
             AdminExample.Criteria criteria2 = adminExample.or();
 
             criteria1.andPhoneLike("%" + key + "%");
-            criteria2.andNickNameLike("%" + key + "%");
+            criteria2.andNicknameLike("%" + key + "%");
             List<Admin> adminList = adminMapper.selectByExample(adminExample);
             for (Admin admin : adminList) {
                 adminIdList.add(admin.getId());

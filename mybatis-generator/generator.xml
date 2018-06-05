@@ -19,8 +19,8 @@
 
         <!--数据库连接信息 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.0.0.1/test" userId="root"
-                        password="1">
+                        connectionURL="jdbc:mysql://10.0.0.9/cp" userId="root"
+                        password="123456">
         </jdbcConnection>
 
         <!--生成的model 包路径 -->

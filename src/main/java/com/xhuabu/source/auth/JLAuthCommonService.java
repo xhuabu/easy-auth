@@ -66,7 +66,7 @@ public class JLAuthCommonService {
         Admin admin = adminService.getAdmin(userId);
 
         JLAuthBean.setUserId(userId);
-        JLAuthBean.setAdminNickName(admin.getNickName());
+        JLAuthBean.setAdminNickName(admin.getNickname());
 
         //得到用户组
         List<AdminGroup> adminGroupList = groupService.getAdminGroupByAdminId(userId);
