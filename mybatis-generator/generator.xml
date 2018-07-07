@@ -39,11 +39,11 @@
             <property name="enableSubPackages" value="ture"/>
         </javaClientGenerator>
 
-        <table tableName="admins" domainObjectName="Admin" enableCountByExample="true"
+        <table tableName="admin" domainObjectName="Admin" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 
-        <table tableName="groups" domainObjectName="Group" enableCountByExample="true"
+        <table tableName="group" domainObjectName="Group" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 

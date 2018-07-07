@@ -19,10 +19,10 @@
 -- Table structure for table `admins`
 --
 
-DROP TABLE IF EXISTS `admins`;
+DROP TABLE IF EXISTS `admin`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `admins` (
+CREATE TABLE `admin` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
   `username` varchar(50) NOT NULL,
   `nickname` varchar(20) DEFAULT NULL COMMENT '昵称',
@@ -56,7 +56,7 @@ CREATE TABLE `admin_group` (
   `create_admin_id` int(11) NOT NULL COMMENT '创建人ID',
   `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8mb4 COMMENT='admin和group关联的表';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COMMENT='admin和group关联的表';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +96,7 @@ CREATE TABLE `group_auth` (
   `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `group_id_auth_uri_UNIQUE` (`group_id`,`uri`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -122,10 +122,10 @@ CREATE TABLE `group_menu` (
 -- Table structure for table `groups`
 --
 
-DROP TABLE IF EXISTS `groups`;
+DROP TABLE IF EXISTS `group`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `groups` (
+CREATE TABLE `group` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
   `name` varchar(20) NOT NULL COMMENT '管理员组名称（类似于部门）',
   `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
@@ -133,17 +133,17 @@ CREATE TABLE `groups` (
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `comment` varchar(255) DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COMMENT='管理后台group，即部门，组。';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COMMENT='管理后台group，即部门，组。';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
 -- Table structure for table `menus`
 --
 
-DROP TABLE IF EXISTS `menus`;
+DROP TABLE IF EXISTS `menu`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `menus` (
+CREATE TABLE `menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
   `name` varchar(20) NOT NULL COMMENT '菜单名称',
   `uri` varchar(100) NOT NULL COMMENT '菜单对应的uri',

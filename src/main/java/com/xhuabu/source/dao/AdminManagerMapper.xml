@@ -14,7 +14,7 @@
         admin.last_time AS lastTime
         FROM admin
         LEFT JOIN admin_group ON admin.id = admin_group.admin_id
-        left JOIN groups ON admin_group.group_id = groups.id
+        left JOIN group ON admin_group.group_id = group.id
         ORDER BY admin.create_time DESC
     </select>
 
@@ -29,7 +29,7 @@
         admin.last_time AS lastTime
         FROM admin
         LEFT JOIN admin_group ON admin.id = admin_group.admin_id
-        left JOIN groups ON admin_group.group_id = groups.id
+        left JOIN group ON admin_group.group_id = group.id
         WHERE admin.id = #{id}
     </select>
 
@@ -43,8 +43,8 @@
         admin.username AS userName
         FROM
         groups
-        LEFT JOIN admins ON groups.create_admin_id = admins.id
-        WHERE groups.id = #{id}
+        LEFT JOIN admin ON group.create_admin_id = admin.id
+        WHERE group.id = #{id}
     </select>
 
     <select id="getListedAdminGroup" resultType="com.xhuabu.source.model.vo.ListedAdminGroupVO">
@@ -58,7 +58,7 @@
         FROM
         admin
         LEFT JOIN admin_group ON admin.id = admin_group.admin_id
-        LEFT JOIN groups ON groups.id = admin_group.group_id
-        WHERE groups.id = #{id}
+        LEFT JOIN group ON group.id = admin_group.group_id
+        WHERE group.id = #{id}
     </select>
 </mapper>
