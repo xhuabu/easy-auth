@@ -28,8 +28,9 @@ public class PasswordEncoder {
 
     /**
      * 采用MD5+salt的方式进行加密
+     *
      * @param password 原始密码
-     * @param salt 盐
+     * @param salt     盐
      */
     public static String encode(String password, String salt) {
 
@@ -43,11 +44,12 @@ public class PasswordEncoder {
 
 
     /**
-     *  加密
-     *  @param password 原始密码
-     *  @param salt 盐
+     * 加密
+     *
+     * @param password 原始密码
+     * @param salt     盐
      */
-    public String crypt(String password, String salt){
+    public String crypt(String password, String salt) {
 
 //        Set<Class<?>> classSet = annotationManager.getConfigurationClasses();
 //
@@ -70,16 +72,13 @@ public class PasswordEncoder {
 
         JLAuthConfiguration config = cryptCache.getPasswordEncoder();
         //如果添加了配置类，则按照配置类的方式加密
-        if (config == null){
+        if (config == null) {
             return PasswordEncoder.encode(password, salt);
-        }else {
+        } else {
             return config.cryptPassword(password, salt);
         }
 
     }
-
-
-
 
 
 }
