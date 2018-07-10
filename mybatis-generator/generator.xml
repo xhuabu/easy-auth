@@ -19,7 +19,7 @@
 
         <!--数据库连接信息 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.0.0.9/cp" userId="root"
+                        connectionURL="jdbc:mysql://10.0.0.9/beihu" userId="root"
                         password="123456">
         </jdbcConnection>
 
@@ -47,7 +47,7 @@
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 
-        <table tableName="menus" domainObjectName="Menu" enableCountByExample="true"
+        <table tableName="menu" domainObjectName="Menu" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 

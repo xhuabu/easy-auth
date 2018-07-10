@@ -3,21 +3,24 @@ package com.xhuabu.source.auth;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.xhuabu.source.dao.*;
+import com.xhuabu.source.common.exception.AuthException;
+import com.xhuabu.source.dao.AdminManagerMapper;
+import com.xhuabu.source.domain.AdminGroupDomain;
+import com.xhuabu.source.domain.GroupAuthDomain;
+import com.xhuabu.source.domain.GroupDomain;
+import com.xhuabu.source.domain.GroupMenuDomain;
 import com.xhuabu.source.model.po.*;
 import com.xhuabu.source.model.vo.GroupDetailVO;
-import com.xhuabu.source.model.vo.GroupVO;
 import com.xhuabu.source.model.vo.ListedAdminGroupVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,130 +32,100 @@ public class JLGroupServiceImpl implements JLGroupService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private GroupMapper groupMapper;
-
-    @Autowired
-    private AdminGroupMapper adminGroupMapper;
-
-    @Autowired
-    private AdminMapper adminMapper;
-
-    @Autowired
-    GroupAuthMapper groupAuthMapper;
-
-    @Autowired
-    GroupMenuMapper groupMenuMapper;
-
-    @Autowired
     AdminManagerMapper adminManagerMapper;
 
     @Autowired
     JLAuthManager authManager;
 
+    @Autowired
+    private GroupDomain groupDomain;
 
-    /**
-     * 获取组列表
-     *
-     * @return 组列表
-     */
+    @Autowired
+    private GroupMenuDomain groupMenuDomain;
+
+    @Autowired
+    private GroupAuthDomain groupAuthDomain;
+
+    @Autowired
+    private AdminGroupDomain adminGroupDomain;
+
+
+    // 新增群組
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Group> getGroups() {
-        GroupExample groupExample = new GroupExample();
-        return groupMapper.selectByExample(groupExample);
-    }
-
-
-    /**
-     * 描述：新增群組
-     *
-     * @param name          群组名
-     * @param comment       群组备注
-     * @param createAdminId 创建人ID
-     * @return 1 成功， 0失败
-     */
-    @Override
-    @Transactional
-    public int insertGroup(String name, String comment, Integer createAdminId) {
+    public Integer insertGroup(String name, String comment, Integer createAdminId) throws AuthException {
         Group group = new Group();
         group.setName(name);
         group.setComment(comment);
         group.setCreateAdminId(createAdminId);
-        return groupMapper.insertSelective(group);
+        return groupDomain.add(group);
     }
 
 
-    /**
-     * 描述：编辑群組
-     *
-     * @param name    群组名
-     * @param groupId 群组ID
-     * @return 1 成功， 0失败
-     */
+    // 编辑群組
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int updateGroup(Integer groupId, String name) {
+    public Integer updateGroup(Integer groupId, String name) throws AuthException {
         Group group = new Group();
         group.setName(name);
         group.setId(groupId);
-        return groupMapper.updateByPrimaryKeySelective(group);
+        return groupDomain.save(group);
     }
 
-    /**
-     * 删除群组
-     *
-     * @param groupId 群组ID
-     * @return 1 成功， 0失败
-     */
+
+    // 删除群组
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int deleteGroup(Integer groupId) {
+    public Integer deleteGroup(Integer groupId) throws AuthException {
 
         try {
             //删除组
-            groupMapper.deleteByPrimaryKey(groupId);
+            Group group = new Group();
+            group.setId(groupId);
+            groupDomain.delete(group);
 
-            //删除与指定组的所有管理员关联
+            // 删除组、菜单关系
+            GroupMenuExample groupMenuExample = new GroupMenuExample();
+            GroupMenuExample.Criteria criteria1 = groupMenuExample.createCriteria();
+            criteria1.andGroupIdEqualTo(groupId);
+            groupMenuDomain.deleteByExample(groupMenuExample);
+
+            // 删除组、权限关系
+            GroupAuthExample groupAuthExample = new GroupAuthExample();
+            GroupAuthExample.Criteria criteria2 = groupAuthExample.createCriteria();
+            criteria2.andGroupIdEqualTo(groupId);
+            groupAuthDomain.deleteByExample(groupAuthExample);
+
+            //删除组、管理员关系
             AdminGroupExample adminGroupExample = new AdminGroupExample();
-            AdminGroupExample.Criteria criteria = adminGroupExample.createCriteria();
-            criteria.andGroupIdEqualTo(groupId);
-            adminGroupMapper.deleteByExample(adminGroupExample);
-            return 1;
+            AdminGroupExample.Criteria criteria3 = adminGroupExample.createCriteria();
+            criteria3.andGroupIdEqualTo(groupId);
+            adminGroupDomain.deleteByExample(adminGroupExample);
         } catch (Exception e) {
-            logger.info("- 删除群组 - 异常：{}", e.getMessage());
+            logger.info("删除群组异常：{}", e.getMessage());
             TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            return 0;
+            return -1;
         }
+        return 0;
     }
 
 
-    /**
-     * 删除组内成员
-     *
-     * @param adminId 管理员ID
-     * @return 1 成功， 0失败
-     */
+    // 删除组内成员
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int deleteGroupAdminById(Integer adminId) {
+    public Integer deleteAdminGroup(Integer adminId) throws AuthException {
 
         AdminGroupExample adminGroupExample = new AdminGroupExample();
         AdminGroupExample.Criteria criteria = adminGroupExample.createCriteria();
         criteria.andAdminIdEqualTo(adminId);
-        return adminGroupMapper.deleteByExample(adminGroupExample);
+        return adminGroupDomain.deleteByExample(adminGroupExample);
     }
 
 
-    /**
-     * 添加组成员
-     *
-     * @param groupId       群组ID
-     * @param adminIds      管理员ids，如：1,2,3,4,5,6
-     * @param createAdminId 创建人ID
-     * @return 1 成功， 0失败
-     */
+    // 添加组成员
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int insertAdminIntoGroup(Integer groupId, String adminIds, Integer createAdminId) {
+    public Integer insertAdminGroup(Integer groupId, String adminIds, Integer createAdminId) throws AuthException {
 
         String[] idStr = adminIds.split(",");
         AdminGroup adminGroup = new AdminGroup();
@@ -160,145 +133,92 @@ public class JLGroupServiceImpl implements JLGroupService {
             adminGroup.setGroupId(groupId);
             adminGroup.setAdminId(Integer.parseInt(id));
             adminGroup.setCreateAdminId(createAdminId);
-            adminGroupMapper.insertSelective(adminGroup);
+            adminGroupDomain.add(adminGroup);
         }
 
-        return 1;
+        return 0;
     }
 
-    /**
-     * 获取AdminGroup
-     *
-     * @param adminId 管理员Id
-     * @return 管理员群组实例
-     */
+
+    // 管理员、组关系（一对一）
     @Override
-    public List<AdminGroup> getAdminGroupByAdminId(Integer adminId) {
+    public AdminGroup getAdminGroup(Integer adminId) {
 
         AdminGroupExample adminGroupExample = new AdminGroupExample();
         adminGroupExample.createCriteria().andAdminIdEqualTo(adminId);
-        return adminGroupMapper.selectByExample(adminGroupExample);
+        return adminGroupDomain.getByExample(adminGroupExample);
     }
 
-    /**
-     * 获取群组权限
-     *
-     * @param groupId 群组ID
-     * @return 组权限实例
-     */
+
+    // 组、权限关系
     @Override
-    public List<GroupAuth> getGroupAuthByGroupId(Integer groupId) {
+    public List<GroupAuth> getGroupAuths(Integer groupId) {
+
         GroupAuthExample groupAuthExample = new GroupAuthExample();
         groupAuthExample.createCriteria().andGroupIdEqualTo(groupId);
-        return groupAuthMapper.selectByExample(groupAuthExample);
+        return groupAuthDomain.getAllByExample(groupAuthExample);
     }
 
-    /**
-     * 获取组菜单
-     *
-     * @param groupId 群组ID
-     * @return 组菜单实例
-     */
+
+    // 组、菜单关系
     @Override
-    public List<GroupMenu> getGroupMenuByGroupId(Integer groupId) {
+    public List<GroupMenu> getGroupMenus(Integer groupId) {
 
         GroupMenuExample groupMenuExample = new GroupMenuExample();
         groupMenuExample.createCriteria().andGroupIdEqualTo(groupId);
-        return groupMenuMapper.selectByExample(groupMenuExample);
+        return groupMenuDomain.getAllByExample(groupMenuExample);
     }
 
 
-    /**
-     * 更新组菜单
-     *
-     * @param groupId       群组ID
-     * @param menuIds       菜单ids, 如： 1，2，3
-     * @param createAdminId 创建人ID
-     * @return 1 成功， 0失败
-     */
+    // 更新组、菜单关系
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int updateGroupMenu(Integer groupId, String menuIds, Integer createAdminId) {
-
+    public Integer updateGroupMenu(Integer groupId, String menuIds, Integer createAdminId) throws AuthException {
 
         //先删除指定组的所有菜单关联
         GroupMenuExample groupMenuExample = new GroupMenuExample();
         GroupMenuExample.Criteria criteria = groupMenuExample.createCriteria();
         criteria.andGroupIdEqualTo(groupId);
-        groupMenuMapper.deleteByExample(groupMenuExample);
+        groupMenuDomain.deleteByExample(groupMenuExample);
 
         //重新生成指定组的所有菜单关联
-        String[] idStr = menuIds.split(",");
+        String[] menuIdss = menuIds.split(",");
         GroupMenu groupMenu = new GroupMenu();
         groupMenu.setGroupId(groupId);
         groupMenu.setCreateAdminId(createAdminId);
-        for (String id : idStr) {
+        for (String id : menuIdss) {
             groupMenu.setMenuId(Integer.parseInt(id));
-            groupMenuMapper.insertSelective(groupMenu);
+            groupMenuDomain.add(groupMenu);
         }
 
-        return 1;
-
+        return 0;
     }
 
 
-    /**
-     * 更新组权限
-     *
-     * @param groupId       群组ID
-     * @param uris        * @param uris 多个权限uri
-     * @return 1 成功， 0失败
-     */
+    // 更新组、权限关系
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int updateGroupAuth(Integer groupId, String uris) {
-
+    public Integer updateGroupAuth(Integer groupId, String uris) throws AuthException {
 
         //先删除指定组的所有权限关联
         GroupAuthExample groupAuthExample = new GroupAuthExample();
         GroupAuthExample.Criteria criteria = groupAuthExample.createCriteria();
         criteria.andGroupIdEqualTo(groupId);
-        groupAuthMapper.deleteByExample(groupAuthExample);
+        groupAuthDomain.deleteByExample(groupAuthExample);
 
         //重新生成指定组的所有权限关联
-        String[] uriStrList = uris.split(",");
+        String[] uriss = uris.split(",");
         GroupAuth groupAuth = new GroupAuth();
         groupAuth.setGroupId(groupId);
         groupAuth.setCreateAdminId(authManager.getUserId());
-        for (String uri : uriStrList) {
+        for (String uri : uriss) {
             groupAuth.setUri(uri);
-            groupAuthMapper.insertSelective(groupAuth);
+            groupAuthDomain.add(groupAuth);
         }
 
-        return 1;
+        return 0;
     }
 
-
-    /**
-     * 描述：获取页面渲染的组列表
-     *
-     * @return 组分页模型
-     */
-    @Override
-    public PageInfo<GroupVO> getListedGroup() {
-
-        GroupExample groupExample = new GroupExample();
-        groupExample.setOrderByClause("create_time DESC");
-        List<Group> groups = groupMapper.selectByExample(groupExample);
-
-        List<GroupVO> listGroup = new ArrayList<>();
-        GroupVO groupVO;
-        Admin admin = null;
-        for (Group group : groups) {
-            groupVO = new GroupVO();
-            BeanUtils.copyProperties(group, groupVO);
-            admin = adminMapper.selectByPrimaryKey(group.getCreateAdminId());
-            groupVO.setCreaterName(admin.getNickname());
-            listGroup.add(groupVO);
-        }
-
-        return new PageInfo<>(listGroup);
-    }
 
     /**
      * 根据组id获取组详情
@@ -328,161 +248,44 @@ public class JLGroupServiceImpl implements JLGroupService {
         return new PageInfo<>(listedAdminGroup);
     }
 
-    /**
-     * 获取未归组的管理员列表
-     *
-     * @param query 查询条件(姓名/账号)
-     * @return 管理员分页模型
-     */
-    @Override
-    public PageInfo<Admin> getListedAdmin(String query) {
 
-
-        AdminGroupExample adminGroupExample = new AdminGroupExample();
-        List<AdminGroup> adminGroups = adminGroupMapper.selectByExample(adminGroupExample);
-
-        //获取已有组的管理员
-        List<Integer> ids = new ArrayList<>();
-        for (AdminGroup adminGroup : adminGroups) {
-            ids.add(adminGroup.getAdminId());
-        }
-
-        //查询没归组的管理员
-        AdminExample adminExample = new AdminExample();
-        if (!StringUtils.isEmpty(query)) {
-            AdminExample.Criteria criteria1 = adminExample.createCriteria();
-            AdminExample.Criteria criteria2 = adminExample.or();
-            criteria1.andIdNotIn(ids).andUsernameLike("%" + query + "%");
-            criteria2.andIdNotIn(ids).andPhoneLike("%" + query + "%");
-        } else {
-            adminExample.createCriteria().andIdNotIn(ids);
-        }
-        List<Admin> admins = adminMapper.selectByExample(adminExample);
-
-        return new PageInfo<>(admins);
-
-    }
-
-
-    /**
-     * 根据adminId获取所属组
-     *
-     * @param adminId
-     * @return 组
-     */
-    @Override
-    public Group getGroupByAdminId(Integer adminId){
-
-        // 管理员和组是一对一关系
-        AdminGroupExample example = new AdminGroupExample();
-        example.or().andAdminIdEqualTo(adminId);
-        List<AdminGroup> adminGroups = adminGroupMapper.selectByExample(example);
-
-        if (adminGroups == null || adminGroups.isEmpty()) {
-            return null;
-        }
-
-        // 获取组
-        return groupMapper.selectByPrimaryKey(adminGroups.get(0).getGroupId());
-    }
-
-
-    /**
-     * 根据组ID获取组
-     *
-     * @param groupId
-     * @return 组
-     */
+    // 组信息
     @Override
     public Group getGroup(Integer groupId) {
-
-        return groupMapper.selectByPrimaryKey(groupId);
+        return groupDomain.get(groupId, true);
     }
 
-    /**
-     * 根据组ID分页获取管理员列表
-     *
-     * @param groupId 组ID
-     * @param key 查询条件
-     * @param page 页码
-     * @param size 页数
-     * @return 组管理员分页
-     */
+
+    // 组内管理员列表
     @Override
-    public PageInfo<AdminGroup> getAdminGroupsByGroupId(Integer groupId, String key, Integer page, Integer size) {
+    public PageInfo<AdminGroup> getAdminGroups(Integer groupId, Integer page, Integer size) {
 
-
-        // 根据Key 获取idlist
-        List<Integer> adminIdList = new ArrayList<>();
-        if (!StringUtils.isEmpty(key)) {
-            AdminExample adminExample = new AdminExample();
-            AdminExample.Criteria criteria1 = adminExample.createCriteria();
-            AdminExample.Criteria criteria2 = adminExample.or();
-
-            criteria1.andPhoneLike("%" + key + "%");
-            criteria2.andNicknameLike("%" + key + "%");
-            List<Admin> adminList = adminMapper.selectByExample(adminExample);
-            for (Admin admin : adminList) {
-                adminIdList.add(admin.getId());
-            }
-        }
-
-
-        // 获取对应groupId的管理员IdList
         AdminGroupExample example = new AdminGroupExample();
         AdminGroupExample.Criteria criteria = example.createCriteria();
-        criteria.andGroupIdEqualTo(groupId);
-        if (!StringUtils.isEmpty(key)) {
-            if (adminIdList.isEmpty()) {
-                adminIdList.add(-1);
-            }
-            criteria.andAdminIdIn(adminIdList);
+        if (groupId != null) {
+            criteria.andGroupIdEqualTo(groupId);
+        }
+        if (StringUtils.isEmpty(example.getOrderByClause())) {
+            example.setOrderByClause("create_time desc");
         }
 
-
-        return PageHelper.startPage(page, size).doSelectPageInfo( () -> {
-            adminGroupMapper.selectByExample(example);
-        });
-
+        return adminGroupDomain.getsByExample(example, page, size);
     }
 
-    /**
-     * 查询组
-     *
-     * @param key  组名筛选
-     * @param page
-     * @param size
-     * @return
-     */
+
+    // 组列表
     @Override
-    public PageInfo<Group> getGroupWithPage(String key, Integer page, Integer size){
+    public PageInfo<Group> getGroups(String name, Integer page, Integer size) {
 
-
-        GroupExample groupExample = getGroupExample(key);
-
-        PageHelper.startPage(page, size);
-        PageInfo<Group> pageInfo = new PageInfo<>(groupMapper.selectByExample(groupExample));
-
-        return pageInfo;
-    }
-
-    /**
-     * 获取组查询条件
-     *
-     * @param key
-     * @return
-     */
-    private GroupExample getGroupExample(String key) {
-        GroupExample groupsExample = new GroupExample();
-        if (!StringUtils.isEmpty(key)) {
-            groupsExample.createCriteria().andNameLike("%" + key + "%");
+        GroupExample example = new GroupExample();
+        GroupExample.Criteria criteria = example.createCriteria();
+        if (StringUtils.isNotEmpty(name)) {
+            criteria.andNameLike("%" + name + "%");
         }
-
-        groupsExample.setOrderByClause("create_time desc");
-
-        return groupsExample;
+        if (StringUtils.isEmpty(example.getOrderByClause())) {
+            example.setOrderByClause("create_time desc");
+        }
+        return groupDomain.getsByExample(example, page, size);
     }
-
-
 
 }

@@ -1,5 +1,7 @@
 package com.xhuabu.source.auth;
 
+import com.xhuabu.source.domain.AdminDomain;
+import com.xhuabu.source.domain.MenuDomain;
 import com.xhuabu.source.model.po.*;
 import com.xhuabu.source.model.vo.MenuVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,13 @@ public class JLAuthCommonService {
     private JLGroupService groupService;
 
     @Autowired
-    private JLMenuService menuService;
+    private AdminDomain adminDomain;
 
     @Autowired
-    private JLAdminService adminService;
+    private MenuDomain menuDomain;
 
 
-
+    @SuppressWarnings(value = "Duplicates")
     private List<MenuVO> getMenuTree(Integer parentId, Set<Menu> menusSet) {
         List<MenuVO> result = new ArrayList<>();
 
@@ -63,32 +65,34 @@ public class JLAuthCommonService {
 
         JLAuthBean JLAuthBean = new JLAuthBean();
 
-        Admin admin = adminService.getAdmin(userId);
+        Admin admin = adminDomain.get(userId, true);
 
         JLAuthBean.setUserId(userId);
         JLAuthBean.setAdminNickName(admin.getNickname());
 
         //得到用户组
-        List<AdminGroup> adminGroupList = groupService.getAdminGroupByAdminId(userId);
+        List<AdminGroup> adminGroupList = new ArrayList<>();
+        AdminGroup adminGroup = groupService.getAdminGroup(userId);
+        adminGroupList.add(adminGroup);
 
         Set<String> uriSet = new HashSet<>();
 
         Set<Menu> menuSet = new HashSet<>();
 
-        for (AdminGroup adminGroup : adminGroupList) {
-            Integer groupId = adminGroup.getGroupId();
+        for (AdminGroup ag : adminGroupList) {
+            Integer groupId = ag.getGroupId();
 
             //查对应的 uri
-            List<GroupAuth> groupAuthList = groupService.getGroupAuthByGroupId(groupId);
+            List<GroupAuth> groupAuthList = groupService.getGroupAuths(groupId);
             for (GroupAuth groupAuth : groupAuthList) {
 //                Auth auth = authService.getAuthById(groupAuth.getAuthId());
                 uriSet.add(groupAuth.getUri());
             }
 
             //查对应的 menus
-            List<GroupMenu> groupMenuList = groupService.getGroupMenuByGroupId(groupId);
+            List<GroupMenu> groupMenuList = groupService.getGroupMenus(groupId);
             for (GroupMenu groupMenu : groupMenuList) {
-                Menu menu = menuService.getMenuById(groupMenu.getMenuId());
+                Menu menu = menuDomain.get(groupMenu.getMenuId(), true);
                 menuSet.add(menu);
             }
         }
@@ -96,7 +100,6 @@ public class JLAuthCommonService {
         JLAuthBean.setMenuVOList(getMenuTree(null, menuSet));
 
         return JLAuthBean;
-
     }
 
 }

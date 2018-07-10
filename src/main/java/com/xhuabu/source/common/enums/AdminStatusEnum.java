@@ -8,9 +8,9 @@ import java.util.List;
  */
 public enum AdminStatusEnum {
 
-    ADMIN_STATUS_FREEZE(-1,"冻结"),
-    ADMIN_STATUS_INIT(0,"初始"),
-    ADMIN_STATUS_NORMAL(1,"正常使用");
+    FREEZE(-1, "冻结"),
+    DEFAULT(0, "初始"),
+    NORMAL(1, "正常使用");
 
     /**
      * 类型码
@@ -35,7 +35,6 @@ public enum AdminStatusEnum {
         this.description = description;
     }
 
-
     /**
      * 根据code得到相应的枚举常量
      */
@@ -48,6 +47,5 @@ public enum AdminStatusEnum {
         }
         return null;
     }
-
 
 }

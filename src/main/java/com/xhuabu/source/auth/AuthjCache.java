@@ -74,8 +74,6 @@ public class AuthjCache {
             });
         }
 
-
-
     }
 
     public AuthjBean getAuthj(String uri) {
