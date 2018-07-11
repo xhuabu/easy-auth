@@ -43,7 +43,8 @@
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 
-        <table tableName="group" domainObjectName="Group" enableCountByExample="true"
+        <!-- group是sql保留字 -->
+        <table tableName="groups" domainObjectName="Group" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 
