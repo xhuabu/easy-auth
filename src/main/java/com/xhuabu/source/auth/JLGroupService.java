@@ -7,8 +7,6 @@ import com.xhuabu.source.model.po.AdminGroup;
 import com.xhuabu.source.model.po.Group;
 import com.xhuabu.source.model.po.GroupAuth;
 import com.xhuabu.source.model.po.GroupMenu;
-import com.xhuabu.source.model.vo.GroupDetailVO;
-import com.xhuabu.source.model.vo.ListedAdminGroupVO;
 
 import java.util.List;
 
@@ -107,24 +105,6 @@ public interface JLGroupService {
     Integer updateGroupAuth(Integer groupId, String uris) throws AuthException;
 
     /**
-     * 根据组id获取组成员列表
-     *
-     * @param pageNo  页码
-     * @param pageSize 页数
-     * @param id 组ID
-     * @return  组成员列表
-     */
-    PageInfo<ListedAdminGroupVO> getListedAdminGroupById(Integer pageNo, Integer pageSize, Integer id);
-
-    /**
-     * 根据组id获取组详情
-     *
-     * @param groupId 组id
-     * @return 组详情
-     */
-    GroupDetailVO getGroupDetailById(Integer groupId);
-
-    /**
      * 组信息
      *
      * @param groupId
@@ -141,7 +121,6 @@ public interface JLGroupService {
      * @return 组管理员分页
      */
     PageInfo<AdminGroup> getAdminGroups(Integer groupId, Integer page, Integer size);
-
 
     /**
      * 组列表

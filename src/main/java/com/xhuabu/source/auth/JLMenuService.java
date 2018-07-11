@@ -23,7 +23,7 @@ public interface JLMenuService {
      * @param createAdminId 创建人ID
      * @return 1 成功 0 失败
      */
-    Integer insertMenu(Integer parentId, String name, String uri, String comment, Integer createAdminId) throws AuthException;
+    Integer addMenu(Integer parentId, String name, String uri, String comment, Integer createAdminId) throws AuthException;
 
     /**
      * 编辑菜单
@@ -66,6 +66,6 @@ public interface JLMenuService {
      *
      * @return 菜单分页列表
      */
-    List<Menu> getMenus();
+    List<Menu> getMenus(Integer groupId);
 
 }

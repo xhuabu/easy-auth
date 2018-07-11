@@ -6,16 +6,12 @@ import com.xhuabu.source.common.coder.PasswordEncoder;
 import com.xhuabu.source.common.enums.AdminStatusEnum;
 import com.xhuabu.source.common.exception.AuthException;
 import com.xhuabu.source.common.manager.AnnotationManager;
-import com.xhuabu.source.dao.AdminGroupMapper;
-import com.xhuabu.source.dao.AdminManagerMapper;
-import com.xhuabu.source.dao.AdminMapper;
 import com.xhuabu.source.domain.AdminDomain;
 import com.xhuabu.source.domain.AdminGroupDomain;
 import com.xhuabu.source.model.po.Admin;
 import com.xhuabu.source.model.po.AdminExample;
 import com.xhuabu.source.model.po.AdminGroup;
 import com.xhuabu.source.model.po.AdminGroupExample;
-import com.xhuabu.source.model.vo.ListedAdminVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,9 +35,6 @@ public class JLAdminServiceImpl implements JLAdminService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @Autowired
-    AdminManagerMapper adminManagerMapper;
 
     @Autowired
     private AdminDomain adminDomain;
@@ -206,9 +200,19 @@ public class JLAdminServiceImpl implements JLAdminService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Integer deleteAdmin(Integer adminId) {
+
+        // 1.删除组、管理员关系
+        AdminGroupExample adminGroupExample = new AdminGroupExample();
+        AdminGroupExample.Criteria criteria = adminGroupExample.createCriteria();
+        criteria.andAdminIdEqualTo(adminId);
+        adminGroupDomain.deleteByExample(adminGroupExample);
+
+        // 2.删除管理员
         Admin admin = new Admin();
         admin.setId(adminId);
-        return adminDomain.delete(admin);
+        adminDomain.delete(admin);
+
+        return 0;
     }
 
 
@@ -243,32 +247,29 @@ public class JLAdminServiceImpl implements JLAdminService {
     }
 
 
-    // 分页获取管理员列表
-    @Override
-    public PageInfo<ListedAdminVO> getListedAdmin(Integer page, Integer size) {
-
-        List<ListedAdminVO> listedAdmin = adminManagerMapper.getListedAdmin();
-        return new PageInfo<>(listedAdmin);
-
-    }
-
-
-    // 通过id查询管理员信息
-    @Override
-    public ListedAdminVO getAdminById(Integer adminId) {
-        return adminManagerMapper.getAdminById(adminId);
-    }
-
-
     // 搜索管理员
     @Override
-    public PageInfo<Admin> getAdmins(String username, String phone, Integer status, Integer page, Integer size) {
+    public PageInfo<Admin> getAdmins(Integer groupId, String username, String phone, Integer status, Integer page, Integer size) {
 
         AdminExample example = new AdminExample();
         AdminExample.Criteria criteria = example.createCriteria();
 
-        if (StringUtils.isNotEmpty(username)) {
+        List<Integer> adminIds = new ArrayList<>(0);
+        if (groupId != null) {
+            AdminGroupExample adminGroupExample = new AdminGroupExample();
+            AdminGroupExample.Criteria criteria1 = adminGroupExample.createCriteria();
+            criteria1.andGroupIdEqualTo(groupId);
+            PageInfo<AdminGroup> adminGroupPageInfo = adminGroupDomain.getsByExample(adminGroupExample, page, size);
+            for (AdminGroup adminGroup : adminGroupPageInfo.getList()) {
+                adminIds.add(adminGroup.getAdminId());
+            }
+        }
 
+        if (adminIds.size() != 0) {
+            criteria.andIdIn(adminIds);
+        }
+
+        if (StringUtils.isNotEmpty(username)) {
             criteria.andNicknameLike("%" + username + "%");
         }
 

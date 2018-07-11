@@ -62,6 +62,6 @@ public class PasswordEncoderInit implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         // 由于使用Gradle静态导入jar时，启动SpringBoot会报异常，所以需要屏蔽自定义加密方式
-        getPasswordEncoder();
+//        getPasswordEncoder();
     }
 }

@@ -21,13 +21,13 @@ public class PropertiesConfiguration {
     private String ipWhiteList;
 
     /**
-     *  控制器所在包
+     * 控制器所在包
      */
     private String contollerPackagePath;
 
 
     /**
-     *  指定加密类的路径
+     * 指定加密类的路径
      */
     private String cryptClassPackagePath;
 

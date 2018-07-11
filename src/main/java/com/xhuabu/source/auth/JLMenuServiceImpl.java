@@ -3,6 +3,7 @@ package com.xhuabu.source.auth;
 import com.xhuabu.source.common.exception.AuthException;
 import com.xhuabu.source.domain.GroupMenuDomain;
 import com.xhuabu.source.domain.MenuDomain;
+import com.xhuabu.source.model.po.GroupMenu;
 import com.xhuabu.source.model.po.GroupMenuExample;
 import com.xhuabu.source.model.po.Menu;
 import com.xhuabu.source.model.po.MenuExample;
@@ -37,7 +38,7 @@ public class JLMenuServiceImpl implements JLMenuService {
     // 新增菜单
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public Integer insertMenu(Integer parentId, String name, String uri, String comment, Integer createAdminId) throws AuthException {
+    public Integer addMenu(Integer parentId, String name, String uri, String comment, Integer createAdminId) throws AuthException {
 
         Menu menu = new Menu();
         menu.setParentId(parentId);
@@ -136,15 +137,30 @@ public class JLMenuServiceImpl implements JLMenuService {
 
     // 菜单列表
     @Override
-    public List<Menu> getMenus() {
+    public List<Menu> getMenus(Integer groupId) {
 
         List<Menu> menus = new ArrayList<>();
+
+        List<Integer> menuIds = new ArrayList<>(0);
+
+        if (groupId != null) {
+            GroupMenuExample groupMenuExample = new GroupMenuExample();
+            GroupMenuExample.Criteria criteria1 = groupMenuExample.createCriteria();
+            criteria1.andGroupIdEqualTo(groupId);
+            List<GroupMenu> groupMenus = groupMenuDomain.getAllByExample(groupMenuExample);
+            for (GroupMenu groupMenu : groupMenus) {
+                menuIds.add(groupMenu.getMenuId());
+            }
+        }
 
         // 父菜单列表
         MenuExample menuExample = new MenuExample();
         menuExample.setOrderByClause("create_time DESC");
         MenuExample.Criteria criteria = menuExample.createCriteria();
         criteria.andParentIdIsNull();
+        if (menuIds.size() != 0) {
+            criteria.andIdIn(menuIds);
+        }
         List<Menu> parentMenus = menuDomain.getAllByExample(menuExample);
 
         for (Menu menu : parentMenus) {

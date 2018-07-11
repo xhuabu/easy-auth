@@ -4,7 +4,6 @@ package com.xhuabu.source.auth;
 import com.github.pagehelper.PageInfo;
 import com.xhuabu.source.common.exception.AuthException;
 import com.xhuabu.source.model.po.Admin;
-import com.xhuabu.source.model.vo.ListedAdminVO;
 
 
 public interface JLAdminService {
@@ -89,6 +88,7 @@ public interface JLAdminService {
     /**
      * 搜索管理员
      *
+     * @param groupId 组
      * @param username 姓名
      * @param phone 手机号
      * @param status 状态
@@ -96,20 +96,6 @@ public interface JLAdminService {
      * @param size 每页长度
      * @return
      */
-    PageInfo<Admin> getAdmins(String username, String phone, Integer status, Integer page, Integer size);
+    PageInfo<Admin> getAdmins(Integer groupId, String username, String phone, Integer status, Integer page, Integer size);
 
-    /**
-     * 分页获取管理员列表
-     *
-     * @return 管理员列表页
-     */
-    PageInfo<ListedAdminVO> getListedAdmin(Integer page, Integer size);
-
-    /**
-     * 通过id查询管理员信息
-     *
-     * @param adminId 管理员ID
-     * @return 管理员信息
-     */
-    ListedAdminVO getAdminById(Integer adminId);
 }

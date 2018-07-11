@@ -1,17 +1,13 @@
 package com.xhuabu.source.auth;
 
 
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.xhuabu.source.common.exception.AuthException;
-import com.xhuabu.source.dao.AdminManagerMapper;
 import com.xhuabu.source.domain.AdminGroupDomain;
 import com.xhuabu.source.domain.GroupAuthDomain;
 import com.xhuabu.source.domain.GroupDomain;
 import com.xhuabu.source.domain.GroupMenuDomain;
 import com.xhuabu.source.model.po.*;
-import com.xhuabu.source.model.vo.GroupDetailVO;
-import com.xhuabu.source.model.vo.ListedAdminGroupVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +26,6 @@ import java.util.List;
 public class JLGroupServiceImpl implements JLGroupService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    AdminManagerMapper adminManagerMapper;
 
     @Autowired
     JLAuthManager authManager;
@@ -217,35 +210,6 @@ public class JLGroupServiceImpl implements JLGroupService {
         }
 
         return 0;
-    }
-
-
-    /**
-     * 根据组id获取组详情
-     *
-     * @param groupId 组id
-     * @return 组详情
-     */
-    @Override
-    public GroupDetailVO getGroupDetailById(Integer groupId) {
-
-        return adminManagerMapper.getGroupDetailById(groupId);
-    }
-
-    /**
-     * 根据组id获取组成员列表
-     *
-     * @param pageNo   页码
-     * @param pageSize 页数
-     * @param id       组ID
-     * @return 组成员列表
-     */
-    @Override
-    public PageInfo<ListedAdminGroupVO> getListedAdminGroupById(Integer pageNo, Integer pageSize, Integer id) {
-
-        PageHelper.startPage(pageNo, pageSize);
-        List<ListedAdminGroupVO> listedAdminGroup = adminManagerMapper.getListedAdminGroup(id);
-        return new PageInfo<>(listedAdminGroup);
     }
 
 
