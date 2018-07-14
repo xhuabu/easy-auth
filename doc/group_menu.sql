@@ -16,24 +16,23 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `auth`
+-- Table structure for table `group_menu`
 --
 
-DROP TABLE IF EXISTS `auth`;
+DROP TABLE IF EXISTS `group_menu`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `auth` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `group_menu` (
+  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
   `kid` varchar(40) DEFAULT NULL,
-  `name` varchar(40) NOT NULL COMMENT '权限名称',
-  `uri` varchar(255) NOT NULL COMMENT 'Uri',
-  `create_admin_id` int(11) NOT NULL,
-  `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `comment` varchar(255) DEFAULT '' COMMENT '备注',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
+  `group_id` int(11) NOT NULL,
+  `menu_id` int(11) NOT NULL,
+  `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `comment` varchar(255) NOT NULL DEFAULT '' COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -45,4 +44,4 @@ CREATE TABLE `auth` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-07-14 23:38:41
+-- Dump completed on 2018-07-14 23:38:42
