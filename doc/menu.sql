@@ -26,7 +26,7 @@ CREATE TABLE `menu` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '员工ID',
   `kid` varchar(40) DEFAULT NULL,
   `name` varchar(20) NOT NULL COMMENT '菜单名称',
-  `uri` varchar(100) NOT NULL COMMENT '菜单对应的uri',
+  `uri` varchar(100) DEFAULT NULL COMMENT '菜单对应的uri',
   `parent_id` int(11) DEFAULT NULL COMMENT '父菜单ID',
   `create_admin_id` int(11) NOT NULL COMMENT '创建者ID',
   `weight` int(11) NOT NULL DEFAULT '0' COMMENT '权重',
