@@ -33,16 +33,16 @@ public class PasswordEncoderInit implements InitializingBean {
 
         JLAuthConfiguration config = null;
         try {
-            for ( Class aClass : classSet){
-                config = (JLAuthConfiguration)aClass.newInstance();
-                if (config != null){
+            for (Class aClass : classSet) {
+                config = (JLAuthConfiguration) aClass.newInstance();
+                if (config != null) {
                     cryptCache.setPasswordEncoder(config);
                     break;
                 }
             }
 
             return config;
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error("实例化配置类失败:{}", e);
         }
 
@@ -61,6 +61,7 @@ public class PasswordEncoderInit implements InitializingBean {
      */
     @Override
     public void afterPropertiesSet() throws Exception {
-        getPasswordEncoder();
+        // 由于使用Gradle静态导入jar时，启动SpringBoot会报异常，所以需要屏蔽自定义加密方式
+//        getPasswordEncoder();
     }
 }

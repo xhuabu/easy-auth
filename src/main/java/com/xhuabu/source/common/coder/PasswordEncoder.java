@@ -2,7 +2,7 @@ package com.xhuabu.source.common.coder;
 
 
 import com.xhuabu.source.common.cache.CryptCache;
-import com.xhuabu.source.common.tool.CryptUtil;
+import com.xhuabu.source.common.tool.Md5;
 import com.xhuabu.source.config.JLAuthConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,26 +28,28 @@ public class PasswordEncoder {
 
     /**
      * 采用MD5+salt的方式进行加密
+     *
      * @param password 原始密码
-     * @param salt 盐
+     * @param salt     盐
      */
-    public static String defaulCrypt(String password, String salt) {
+    public static String encode(String password, String salt) {
 
         //1 拼接salt
         String sourcePwd = password + "{" + salt + "}";
 
         //2 MD5加密
-        return CryptUtil.md5(sourcePwd);
+        return Md5.md5(sourcePwd);
 
     }
 
 
     /**
-     *  加密
-     *  @param password 原始密码
-     *  @param salt 盐
+     * 加密
+     *
+     * @param password 原始密码
+     * @param salt     盐
      */
-    public String crypt(String password, String salt){
+    public String crypt(String password, String salt) {
 
 //        Set<Class<?>> classSet = annotationManager.getConfigurationClasses();
 //
@@ -70,16 +72,13 @@ public class PasswordEncoder {
 
         JLAuthConfiguration config = cryptCache.getPasswordEncoder();
         //如果添加了配置类，则按照配置类的方式加密
-        if (config == null){
-            return PasswordEncoder.defaulCrypt(password, salt);
-        }else {
+        if (config == null) {
+            return PasswordEncoder.encode(password, salt);
+        } else {
             return config.cryptPassword(password, salt);
         }
 
     }
-
-
-
 
 
 }

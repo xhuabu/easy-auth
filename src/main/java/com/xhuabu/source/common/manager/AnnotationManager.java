@@ -18,18 +18,14 @@ import java.util.Set;
 @Component
 public class AnnotationManager {
 
-
     /**
-     *  获取添加了@JLAuthConfig的类
+     * 获取添加了@JLAuthConfig的类
      */
-    public Set<Class<?>> getConfigurationClasses(){
+    public Set<Class<?>> getConfigurationClasses() {
 
         Reflections reflections = new Reflections("");
         Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(JLAuthConfig.class);
         return annotated;
     }
-
-
-
 
 }

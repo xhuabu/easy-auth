@@ -19,8 +19,8 @@
 
         <!--数据库连接信息 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.0.0.1/test" userId="root"
-                        password="1">
+                        connectionURL="jdbc:mysql://10.0.0.9/beihu" userId="root"
+                        password="123456">
         </jdbcConnection>
 
         <!--生成的model 包路径 -->
@@ -39,15 +39,16 @@
             <property name="enableSubPackages" value="ture"/>
         </javaClientGenerator>
 
-        <table tableName="admins" domainObjectName="Admin" enableCountByExample="true"
+        <table tableName="admin" domainObjectName="Admin" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 
+        <!-- group是sql保留字 -->
         <table tableName="groups" domainObjectName="Group" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 
-        <table tableName="menus" domainObjectName="Menu" enableCountByExample="true"
+        <table tableName="menu" domainObjectName="Menu" enableCountByExample="true"
                enableDeleteByExample="true" enableSelectByExample="true"
                enableUpdateByExample="true"></table>
 

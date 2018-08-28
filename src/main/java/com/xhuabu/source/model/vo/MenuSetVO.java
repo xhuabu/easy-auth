@@ -10,9 +10,8 @@ import java.util.List;
  */
 public class MenuSetVO {
 
-
     /**
-     *  菜单
+     * 菜单
      */
     Menu menu;
 

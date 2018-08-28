@@ -1,10 +1,9 @@
 package com.xhuabu.source.auth;
 
-
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import com.xhuabu.source.dao.GroupMenuMapper;
-import com.xhuabu.source.dao.MenuMapper;
+import com.xhuabu.source.common.exception.AuthException;
+import com.xhuabu.source.domain.GroupMenuDomain;
+import com.xhuabu.source.domain.MenuDomain;
+import com.xhuabu.source.model.po.GroupMenu;
 import com.xhuabu.source.model.po.GroupMenuExample;
 import com.xhuabu.source.model.po.Menu;
 import com.xhuabu.source.model.po.MenuExample;
@@ -13,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -29,39 +29,16 @@ public class JLMenuServiceImpl implements JLMenuService {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private MenuMapper menuMapper;
+    private MenuDomain menuDomain;
 
     @Autowired
-    private GroupMenuMapper groupMenuMapper;
+    private GroupMenuDomain groupMenuDomain;
 
 
-    /**
-     * 获取顶级菜单列表
-     *
-     * @return 顶级菜单列表
-     */
+    // 新增菜单
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public List<Menu> getListedMenu() {
-
-        MenuExample menuExample = new MenuExample();
-        MenuExample.Criteria criteria = menuExample.createCriteria();
-        criteria.andParentIdIsNull();
-        return menuMapper.selectByExample(menuExample);
-    }
-
-    /**
-     * 新增菜单
-     *
-     * @param parentId      父级菜单ID
-     * @param name          菜单名
-     * @param uri           菜单uri
-     * @param comment       菜单备注
-     * @param createAdminId 创建人ID
-     * @return 1 成功 0 失败
-     */
-    @Override
-    public int insertMenu(Integer parentId, String name, String uri, String comment, Integer createAdminId) {
-
+    public Integer addMenu(Integer parentId, String name, String uri, String comment, Integer createAdminId) throws AuthException {
 
         Menu menu = new Menu();
         menu.setParentId(parentId);
@@ -69,143 +46,67 @@ public class JLMenuServiceImpl implements JLMenuService {
         menu.setUri(uri);
         menu.setComment(comment);
         menu.setCreateAdminId(createAdminId);
-        return menuMapper.insertSelective(menu);
-
+        return menuDomain.add(menu);
     }
 
-    /**
-     * 编辑菜单
-     *
-     * @param menuId   菜单ID
-     * @param parentId 父级菜单ID
-     * @param name     菜单名
-     * @param uri      菜单uri
-     * @param comment  菜单备注
-     * @return 1 成功 0 失败
-     */
-    @Override
-    @Transactional
-    public int updateMenu(Integer menuId, Integer parentId, String name, String uri, String comment) {
 
+    // 编辑菜单
+    @Transactional(propagation = Propagation.REQUIRED)
+    @Override
+    public Integer updateMenu(Integer menuId, Integer parentId, String name, String uri, String comment) throws AuthException {
 
         Menu menu = new Menu();
+        menu.setId(menuId);
         menu.setParentId(parentId);
         menu.setName(name);
         menu.setUri(uri);
         menu.setComment(comment);
-        menu.setId(menuId);
-        return menuMapper.updateByPrimaryKeySelective(menu);
+        return menuDomain.save(menu);
 
     }
 
-    /**
-     * 删除菜单
-     *
-     * @param menuId 菜单ID
-     * @return 1 成功 0 失败
-     */
+
+    // 删除菜单
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    @Transactional
-    public int deleteMenu(Integer menuId) {
+    public Integer deleteMenu(Integer menuId) throws AuthException {
 
+        List<Integer> menuIds = new ArrayList<>();
+        menuIds.add(menuId);
 
-        //如果是父菜单，则将其子菜单一起删除
-        menuMapper.deleteByPrimaryKey(menuId);
+        // 1. 删除菜单 & 子菜单、组关系
         MenuExample menuExample = new MenuExample();
         MenuExample.Criteria criteria = menuExample.createCriteria();
         criteria.andParentIdEqualTo(menuId);
-        //如果id是父菜单id，则获取所有子菜单id
-        List<Menu> menus = menuMapper.selectByExample(menuExample);
-        //删除所有子菜单
-        menuMapper.deleteByExample(menuExample);
-
-        //将"组-菜单"的关联一并删除
+        List<Menu> menus = menuDomain.getAllByExample(menuExample);
+        for (Menu menu : menus) {
+            menuIds.add(menu.getId());
+        }
         GroupMenuExample groupMenuExample = new GroupMenuExample();
-        GroupMenuExample.Criteria criteria1 = groupMenuExample.createCriteria();
-        criteria1.andMenuIdEqualTo(menuId);
-        groupMenuMapper.deleteByExample(groupMenuExample);
+        groupMenuExample.or().andMenuIdIn(menuIds);
+        groupMenuDomain.deleteByExample(groupMenuExample);
 
-        //如果子菜单存在，删除"组-子菜单"的关联
-        List<Integer> ids = new ArrayList<Integer>();
-        for (Menu menu : menus) {
-            ids.add(menu.getId());
-        }
+        // 2. 删除所有子菜单
+        menuDomain.deleteByExample(menuExample);
 
-        if (!ids.isEmpty()) {
-            GroupMenuExample groupMenuExample1 = new GroupMenuExample();
-            GroupMenuExample.Criteria criteria2 = groupMenuExample1.createCriteria();
-            criteria2.andMenuIdIn(ids);
-            groupMenuMapper.deleteByExample(groupMenuExample1);
-        }
+        // 3. 删除当前菜单
+        Menu menu = new Menu();
+        menu.setId(menuId);
+        menuDomain.delete(menu);
 
-        return 1;
+        return 0;
     }
 
-    /**
-     * 获取菜单
-     *
-     * @param menuId 菜单ID
-     * @return 菜单实例
-     */
+
+    // 菜单信息
     @Override
-    public Menu getMenuById(Integer menuId) {
-
-        return menuMapper.selectByPrimaryKey(menuId);
-    }
-
-    /**
-     * 获取所有组的菜单列表
-     *
-     * @return 菜单列表
-     */
-    @Override
-    public List<Menu> getAllMenu() {
-
-        List<Menu> allMenus = new ArrayList<>();
-        MenuExample menuExample = new MenuExample();
-        menuExample.setOrderByClause("create_time DESC");
-        MenuExample.Criteria criteria = menuExample.createCriteria();
-        criteria.andParentIdIsNull();
-        List<Menu> menus = menuMapper.selectByExample(menuExample);
-        MenuExample subMenuExample;
-        List<Menu> subMenus;
-        for (Menu menu : menus) {
-            subMenuExample = new MenuExample();
-            subMenuExample.createCriteria().andParentIdEqualTo(menu.getId());
-            subMenus = menuMapper.selectByExample(subMenuExample);
-            allMenus.add(menu);
-            allMenus.addAll(subMenus);
-        }
-        return allMenus;
-
+    public Menu getMenu(Integer menuId) {
+        return menuDomain.get(menuId, true);
     }
 
 
-    /**
-     * 判断菜单是否为父菜单
-     *
-     * @param menuId 菜单ID
-     * @return true 是，false 不是
-     */
-    @Override
-    public boolean isParentMenu(Integer menuId) {
-
-        Menu menu = menuMapper.selectByPrimaryKey(menuId);
-        Integer parentId = menu.getParentId();
-        if (parentId == null) {
-            logger.info("该菜单为父菜单~");
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 获取树形菜单
-     *
-     * @param parentId 父级ID
-     * @param menusSet 菜单集合
-     * @return 具有层级关系的菜单集合
-     */
+    // 树形菜单列表
+    @SuppressWarnings(value = "Duplicates")
     @Override
     public List<MenuSetVO> getMenuTree(Integer parentId, Set<MenuSetVO> menusSet) {
 
@@ -233,33 +134,46 @@ public class JLMenuServiceImpl implements JLMenuService {
         return result;
     }
 
-    /**
-     * 获取菜单列表
-     *
-     * @return 菜单分页列表
-     */
-    @Override
-    public PageInfo<Menu> getListedMenu(Integer pageNo, Integer pageSize) {
 
-        PageHelper.startPage(pageNo, pageSize);
-        List<Menu> allMenus = new ArrayList<>();
+    // 菜单列表
+    @Override
+    public List<Menu> getMenus(Integer groupId) {
+
+        List<Menu> menus = new ArrayList<>();
+
+        List<Integer> menuIds = new ArrayList<>(0);
+
+        if (groupId != null) {
+            GroupMenuExample groupMenuExample = new GroupMenuExample();
+            GroupMenuExample.Criteria criteria1 = groupMenuExample.createCriteria();
+            criteria1.andGroupIdEqualTo(groupId);
+            List<GroupMenu> groupMenus = groupMenuDomain.getAllByExample(groupMenuExample);
+            for (GroupMenu groupMenu : groupMenus) {
+                menuIds.add(groupMenu.getMenuId());
+            }
+        }
+
+        // 父菜单列表
         MenuExample menuExample = new MenuExample();
         menuExample.setOrderByClause("create_time DESC");
         MenuExample.Criteria criteria = menuExample.createCriteria();
         criteria.andParentIdIsNull();
-        List<Menu> menus = menuMapper.selectByExample(menuExample);
-        MenuExample subMenuExample;
-        List<Menu> subMenus;
-        for (Menu menu : menus) {
-            subMenuExample = new MenuExample();
+        if (menuIds.size() != 0) {
+            criteria.andIdIn(menuIds);
+        }
+        List<Menu> parentMenus = menuDomain.getAllByExample(menuExample);
+
+        for (Menu menu : parentMenus) {
+            // 每个子菜单列表
+            MenuExample subMenuExample = new MenuExample();
             subMenuExample.createCriteria().andParentIdEqualTo(menu.getId());
-            subMenus = menuMapper.selectByExample(subMenuExample);
-            allMenus.add(menu);
-            allMenus.addAll(subMenus);
+            List<Menu> subMenus = menuDomain.getAllByExample(subMenuExample);
+            // 父菜单在前, 子菜单在后
+            menus.add(menu);
+            menus.addAll(subMenus);
         }
 
-        return new PageInfo<>(allMenus);
-
+        return menus;
     }
 
 }

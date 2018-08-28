@@ -26,7 +26,7 @@ public class JLAuthManager {
 
 
     @Autowired
-    JLAuthCommonService JLAuthCommonService;
+    JLAuthServiceImpl JLAuthServiceImpl;
 
     @Autowired
     AnnotationManager annotationManager;
@@ -134,7 +134,7 @@ public class JLAuthManager {
             return null;
         }
 
-        JLAuthBean authBean = JLAuthCommonService.getAvailableUriByUserId(userId);
+        JLAuthBean authBean = JLAuthServiceImpl.getAvailableUriByUserId(userId);
         request.getSession().setAttribute(JLAuthCons.AUTH_KEY, authBean);
 
         return authBean;
